@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* Reset some basic styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.task-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+.task-list {
+    margin-top: 20px;
+}
+
+.task {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.task-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.task-desc {
+    font-size: 14px;
+    color: #777;
+}
+
+.task-deadline {
+    font-size: 12px;
+    color: #555;
+}
+img{
+    width: 30px;
+    height: 30px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Task Manager</h1>
+
+        <!-- Form to add tasks -->
+        <form action="/home/addtask" method="POST" class="task-form">
+            <div class="form-group">
+                <label for="title">Enter Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Enter Description:</label>
+                <input type="text" id="description" name="description" required>
+            </div>
+            <div class="form-group">
+                <label for="deadline">Enter Deadline:</label>
+                <input type="date" id="deadline" name="deadline" required>
+            </div>
+            <button type="submit" class="submit-btn">Add Task</button>
+        </form>
+
+        <!-- Display tasks -->
+        <div class="task-list">
+            <% if (tasks && tasks.length > 0) { %>
+                <% tasks.forEach(task => { %>
+                    <div class="task">
+                        <h4 class="task-title"><%= task.title %></h4>
+                        <p class="task-desc"><%= task.description %></p>
+                        <p class="task-deadline">Deadline: <%= task.deadline %></p>
+                        <button><a href="/home/delete/<%= task.id %>"><img src="/images/trash-bin.png"></a></button>
+                        <form action="/home/complete/<%= task._id %>" method="POST">
+                            <button type="submit"><img src="/images/check.png"></button>
+                          </form>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No tasks available</p>
+            <% } %>
+        </div>
+
+<h2>Completed Tasks</h2>
+<ul>
+  <% tasks.forEach(task => { %>
+    <% if (task.completed) { %>
+      <li><%= task.name %> (Completed)</li>
+    <% } %>
+  <% }) %>
+</ul>
+    </div>
+</body>
+</html>
