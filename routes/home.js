@@ -31,7 +31,6 @@ router.get('/', async (req, res) => {
 
         // Filter out the completed tasks
         const completedTasks = tasks.filter(task => task.completed);
-
         // Render the home page with tasks and completed tasks
         res.render('home', { tasks: tasks, completedTasks: completedTasks });
     } catch (error) {
@@ -106,29 +105,66 @@ router.get('/delete/:id', async (req, res) => {
         );
 
         console.log("Deleted task successfully");
+
         res.redirect(`/home`);
     } catch (error) {
         console.error(error);
         res.status(500).send("An error occurred while deleting the task.");
     }
 });
+const { ObjectId } = require('mongodb'); // Ensure ObjectId is imported if needed
+
 router.post('/complete/:id', async (req, res) => {
     try {
         const userName = req.session.user.name;
         const taskId = req.params.id;
 
-        // Find the user and mark the task as complete
-        await collection.updateOne(
-            { name: userName, 'tasks._id': taskId },
-            { $set: { 'tasks.$.completed': true } } // Mark the task as completed
+        // Validate if taskId is a valid ObjectId
+        if (!ObjectId.isValid(taskId)) {
+            return res.status(400).send('Invalid Task ID');
+        }
+
+        // Step 1: Find the user document
+        const user = await collection.findOne({ name: userName });
+
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Step 2: Find the task
+        console.log('taskId:', taskId);
+        console.log('User tasks:', user.tasks);
+
+        const task = user.tasks.find(task => task._id.toString() === taskId);
+
+        if (!task) {
+            return res.status(404).send('Task not found');
+        }
+
+        // Step 3: Mark the task as completed
+        task.completed = true;
+
+        // Step 4: Update the user document in the database
+        const result = await collection.updateOne(
+            { name: userName, 'tasks._id': new ObjectId(taskId) }, // Matching the user and task by _id
+            { $set: { 'tasks.$.completed': true } }               // Update operation
         );
 
+        console.log('Update result:', result);
+
+        if (result.modifiedCount === 0) {
+            return res.status(500).send('Failed to mark task as complete');
+        }
+
+        // Step 5: Redirect or respond
         res.redirect('/home');
     } catch (error) {
         console.error('Error marking task as complete:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 
 

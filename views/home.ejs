@@ -132,29 +132,53 @@ img{
         <div class="task-list">
             <% if (tasks && tasks.length > 0) { %>
                 <% tasks.forEach(task => { %>
+                    <% if (task.completed == false){ %> <!-- Use 'completed' instead of 'complete' -->
                     <div class="task">
                         <h4 class="task-title"><%= task.title %></h4>
                         <p class="task-desc"><%= task.description %></p>
-                        <p class="task-deadline">Deadline: <%= task.deadline %></p>
-                        <button><a href="/home/delete/<%= task.id %>"><img src="/images/trash-bin.png"></a></button>
-                        <form action="/home/complete/<%= task._id %>" method="POST">
-                            <button type="submit"><img src="/images/check.png"></button>
-                          </form>
+                        <p class="task-deadline">Deadline: <%= task.deadline.toDateString() %></p> <!-- Format the date -->
+                        
+                        <!-- Delete button -->
+                        <button>
+                            <a href="/home/delete/<%= task._id %>">
+                                <img src="/images/trash-bin.png" alt="Delete">
+                            </a>
+                        </button>
+        
+                        <!-- Complete button -->
+                        <form action="/home/complete/<%= task._id %>" method="POST" style="display: inline;">
+                            <button type="submit">
+                                <img src="/images/check.png" alt="Mark Complete">
+                            </button>
+                        </form>
                     </div>
+                    <% } %>
                 <% }) %>
             <% } else { %>
                 <p>No tasks available</p>
             <% } %>
         </div>
-
+        
 <h2>Completed Tasks</h2>
-<ul>
-  <% tasks.forEach(task => { %>
-    <% if (task.completed) { %>
-      <li><%= task.name %> (Completed)</li>
-    <% } %>
-  <% }) %>
-</ul>
+    <div class="task-list">
+        <% if (tasks && tasks.length > 0) { %>
+            <% tasks.forEach(task => { %>
+                <% if (task.completed){ %> <!-- Use 'completed' instead of 'complete' -->
+                <div class="task">
+                    <h4 class="task-title"><%= task.title %></h4>
+                    <p class="task-desc"><%= task.description %></p>
+                    <button>
+                        <a href="/home/delete/<%= task._id %>">
+                            <img src="/images/trash-bin.png" alt="Delete">
+                        </a>
+                    </button>
+                </div>
+                <% } %>
+            <% }) %>
+        <% } else { %>
+            <p>No tasks available</p>
+        <% } %>
+    </div>
     </div>
 </body>
 </html>

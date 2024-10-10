@@ -12,7 +12,7 @@ const task = new schema({
     description: { type: String, required: true },
     deadline: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now },
-    compeleted: { type: Boolean, required: true ,default: false },
+    completed: { type: Boolean, required: true, default: false },
 })
 
 const user = new mongoose.Schema({
