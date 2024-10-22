@@ -104,6 +104,42 @@ img{
     width: 30px;
     height: 30px;
 }
+/* Style for the popup form */
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.popup-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Close button style */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
 
     </style>
 </head>
@@ -119,7 +155,7 @@ img{
             </div>
             <div class="form-group">
                 <label for="description">Enter Description:</label>
-                <input type="text" id="description" name="description" required>
+                <textarea type="text" id="description" name="description" required></textarea>
             </div>
             <div class="form-group">
                 <label for="deadline">Enter Deadline:</label>
@@ -151,6 +187,22 @@ img{
                                 <img src="/images/check.png" alt="Mark Complete">
                             </button>
                         </form>
+                        <button id="editTaskButton"><img src="/images/updated.png"></button>
+                        <div id="popupForm" class="popup">
+                            <div class="popup-content">
+                                <span class="close">&times;</span>
+                                <h2>Edit Task</h2>
+                                <form id="editTaskForm" method="post" action="/home/edit/<%= task._id %>">
+                                    <label for="title">Task Name:</label>
+                                    <input type="text" id="title" name="title" required>
+                                    <br>
+                                    <label for="description">Task Description:</label>
+                                    <textarea id="description" name="description" required></textarea>
+                                    <br>
+                                    <button type="submit">Save Changes</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <% } %>
                 <% }) %>
@@ -158,6 +210,7 @@ img{
                 <p>No tasks available</p>
             <% } %>
         </div>
+        <!-- The popup form -->
         
 <h2>Completed Tasks</h2>
     <div class="task-list">
@@ -181,4 +234,26 @@ img{
     </div>
     </div>
 </body>
+<script>
+    const editTaskButton = document.getElementById('editTaskButton');
+const popupForm = document.getElementById('popupForm');
+const closeBtn = document.querySelector('.close');
+
+// Show the popup form when the button is clicked
+editTaskButton.addEventListener('click', () => {
+    popupForm.style.display = 'block';
+});
+
+// Close the popup form when the close button is clicked
+closeBtn.addEventListener('click', () => {
+    popupForm.style.display = 'none';
+});
+
+// Close the popup form when clicking outside of the form content
+window.addEventListener('click', (event) => {
+    if (event.target === popupForm) {
+        popupForm.style.display = 'none';
+    }
+});
+</script>
 </html>

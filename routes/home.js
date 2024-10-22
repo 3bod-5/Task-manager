@@ -164,6 +164,35 @@ router.post('/complete/:id', async (req, res) => {
     }
 });
 
+router.post('/edit/:id', async (req, res) => {
+    const user =  await collection.findOne({name: req.session.user.name})
+    const id = req.params.id;
+
+    try {
+        // i want to find task from tasks that user have
+        const task = user.tasks.find(task => task._id.toString() === id);
+        
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+        
+        // Check if the task exists
+
+        // Update task properties with the new values from the request body
+        task.title = req.body.title || task.title;
+        task.description = req.body.description || task.description;
+
+        // Save the updated task
+        await user.save();
+
+        console.log(req.body);
+        res.redirect('/home');
+    } catch (error) {
+        console.error("Error updating task:", error);
+        res.status(500).json({ message: "An error occurred while updating the task" });
+    }
+});
+
 
 
 
